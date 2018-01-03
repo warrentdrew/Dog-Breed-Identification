@@ -109,3 +109,6 @@ sample_submission.csv
 
 # exclude vscode file
 .vscode
+
+# macos
+.DS_Store
