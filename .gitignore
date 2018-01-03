@@ -101,7 +101,11 @@ ENV/
 .mypy_cache/
 
 # train and test data
+dataset/
 test/
 train/
 labels.csv
 sample_submission.csv
+
+# exclude vscode file
+.vscode
