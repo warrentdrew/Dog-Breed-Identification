@@ -20,8 +20,8 @@ def max_pool_2x2_same(x):
 
 def basicCNNModel(x_train, y_train):
 #mnist = input_data.read_data_sets("mnist dataset/", one_hot=True)
-    x = tf.placeholder(tf.float32, [None, 90, 90, 3])
-    y_ = tf.placeholder(tf.float32, [None, 120])
+    x = tf.placeholder(tf.float32, [None, 90, 90, 3], name="x")
+    y_ = tf.placeholder(tf.float32, [None, 120], name="y_")
 
     #conv1 + pooling1
     #kernel size [5, 5, 3, 32]
@@ -67,7 +67,7 @@ def basicCNNModel(x_train, y_train):
     h_fc1 = tf.nn.relu(tf.matmul(h_pool4_flat, W_fc1) + b_fc1)
 
     #drop out, drop out should be used for the whole network? for this example it is only used for one layer
-    keep_prob = tf.placeholder(tf.float32)
+    keep_prob = tf.placeholder(tf.float32, name="keep_prob")
     h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
 
     #readout layer
@@ -78,8 +78,8 @@ def basicCNNModel(x_train, y_train):
 
     #training
     cross_entropy = tf.reduce_mean(
-    tf.nn.softmax_cross_entropy_with_logits(labels=y_, logits=y_conv))
-    train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
+    tf.nn.softmax_cross_entropy_with_logits(labels=y_, logits=y_conv), name= "cross_entropy")
+    train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy, name= "train_step")
     correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32), name= "accuracy")
 
@@ -89,7 +89,7 @@ def basicCNNModel(x_train, y_train):
 
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
-        for i in range(20000):
+        for i in range(25000):
             #batch = x_train.next_batch(50)
 
             if idx + 50 > 10222:
@@ -104,21 +104,23 @@ def basicCNNModel(x_train, y_train):
             if i % 100 == 0:
                 train_accuracy = accuracy.eval(feed_dict={
                   x: x_batch, y_: y_batch, keep_prob: 1.0})
-                print('step %d, training accuracy %g' % (i, train_accuracy))
+                train_loss = cross_entropy.eval(feed_dict={
+                  x: x_batch, y_: y_batch, keep_prob: 1.0})
+                print('step %d, training accuracy %g, training loss %g' % (i, train_accuracy, train_loss))
                 save_path = saver.save(sess, "models/basic CNN/model.ckpt")
-            if i % 300 == 0:
-                restore_sess = tf.Session()
-                saver = tf.train.import_meta_graph('models/basic CNN/model.ckpt.meta')
-                saver.restore(restore_sess, tf.train.latest_checkpoint('./models/basic CNN/'))
-                graph = tf.get_default_graph()
-                accuracy_restore = graph.get_tensor_by_name("accuracy:0")
-                logits = graph.get_tensor_by_name("logits:0")
-                print("training accuracy from restored model in step %d is %g" % (
-                i, restore_sess.run(accuracy_restore, feed_dict={
-                    x: x_batch, y_: y_batch, keep_prob: 1.0})))
-                print("logits shape is:" ,
-                    restore_sess.run(tf.shape(logits), feed_dict={
-                        x: x_batch, y_: y_batch, keep_prob: 1.0}))
+            # if i % 300 == 0:
+            #     # restore_sess = tf.Session()
+            #     # saver = tf.train.import_meta_graph('models/basic CNN/model.ckpt.meta')
+            #     # saver.restore(restore_sess, tf.train.latest_checkpoint('./models/basic CNN/'))
+            #     # graph = tf.get_default_graph()
+            #     # accuracy_restore = graph.get_tensor_by_name("accuracy:0")
+            #     # logits = graph.get_tensor_by_name("logits:0")
+            #     print("training accuracy from restored model in step %d is %g" % (
+            #     i, restore_sess.run(accuracy_restore, feed_dict={
+            #         x: x_batch, y_: y_batch, keep_prob: 1.0})))
+            #     # print("logits shape is:" ,
+            #     #    restore_sess.run(tf.shape(logits), feed_dict={
+            #     #        x: x_batch, y_: y_batch, keep_prob: 1.0}))
 
 
             train_step.run(feed_dict={x: x_batch, y_: y_batch, keep_prob: 0.5})

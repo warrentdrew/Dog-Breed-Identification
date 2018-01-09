@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-import cv2
+import cv2              #pip install opencv-python
 import h5py
 
 # transform jpg pictures and corresponding labels into h5 file
@@ -17,6 +17,7 @@ def fPreprocessData(cfg):
     one_hot_labels = np.asarray(one_hot)
 
     # initialize the training and testing variable
+    # initialized as list
     x_train = []
     y_train = []
     x_test = []
@@ -32,7 +33,7 @@ def fPreprocessData(cfg):
         x_test.append(cv2.resize(img, img_size))
 
     y_train = np.array(y_train, np.uint8)
-    x_train = np.array(x_train, np.float32) / 255.
+    x_train = np.array(x_train, np.float32) / 255.  #divide 255 is feature normalization?
     x_test  = np.array(x_test, np.float32) / 255.
 
     with h5py.File('./dataset/dataset.h5', 'w') as hf:
