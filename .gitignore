@@ -104,6 +104,8 @@ ENV/
 dataset/
 test/
 train/
+classifier/
+features/
 labels.csv
 sample_submission.csv
 
