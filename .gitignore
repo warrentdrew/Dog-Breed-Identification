@@ -114,3 +114,6 @@ sample_submission.csv
 
 # macos
 .DS_Store
+
+# macos
+input/.DS_Store
