@@ -1,6 +1,21 @@
-train_percent: 0.6
-validation_percent: 0.2
-test_percent: 0.2
-img_size: [90, 90]
-sDatafile: './dataset/dataset.h5'
-backend: "tensorflow"
+lExtractor: true
+lTrain: true
+lAssemble: false
+nFolds: 5
+img_size: [400, 400]
+validSplit: 0.2
+lr: [0.001]
+batchSize: 128
+epochs: 50
+models: {"InceptionV3": {
+            "model": InceptionV3,
+            "preprocessor": inception_v3_preprocessor,
+            "pooling": "avg"
+         },
+         "Xception": {
+            "model": Xception,
+            "preprocessor": xception_preprocessor,
+            "pooling": "avg"
+         }
+        }
+sOpti: 'adam'
