@@ -32,13 +32,13 @@ def trainClassifier(data_dict, nClass, param_dict, model_name):
     callback_list.append(ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, verbose=1))
     callback_list.append(ModelCheckpoint(model_file))
 
-    model.fit(data_dict['train_data'], data_dict['train_labels'],
+    model.fit(data_dict['x_train'], data_dict['y_train'],
                         epochs=param_dict['epochs'],
                         batch_size=param_dict['batchSize'],
                         validation_split=param_dict['validSplit'],
                         callbacks=callback_list)
 
-    metrics = model.evaluate(data_dict['valid_data'], data_dict['valid_labels'], batch_size=param_dict['batchSize'], verbose=1)
+    metrics = model.evaluate(data_dict['x_valid'], data_dict['y_valid'], batch_size=param_dict['batchSize'], verbose=1)
 
 
     print('training data results:')
@@ -50,7 +50,7 @@ def trainClassifier(data_dict, nClass, param_dict, model_name):
 
     return model
 
-def predict_from_classifier(model_name, test_feature, param_dict):
+def predict_from_classifier(model_name, test_feature, param_dict): #read out a classifier model from a file and make prediction
     model_file = './model/' + model_name + '_' + str(param_dict['img_size'][0]) + '_bs_' \
                  + str(param_dict['batchSize']) + '_model.h5'
 
