@@ -1,0 +1,10 @@
+lExtractor: true
+lTrain: true
+lAssemble: false
+nFolds: 5
+img_size: [299, 299]
+validSplit: 0.2
+lr: [0.001]
+batchSize: 128
+epochs: 50
+sOpti: 'adam'
